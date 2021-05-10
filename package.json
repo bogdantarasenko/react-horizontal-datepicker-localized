@@ -18,14 +18,15 @@
   "private": false,
   "main": "./dist/DatePicker.js",
   "license": "MIT",
-  "author": "Kushagra Agrawal",
+  "author": "Bogdan Tarasenko",
   "babel": {
     "presets": [
       "@babel/preset-react"
     ]
   },
   "dependencies": {
-    "date-fns": "^2.14.0"
+    "date-fns": "^2.14.0",
+    "styled-components": "^5.3.0"
   },
   "peerDependencies": {
     "react": "^16.12.0",

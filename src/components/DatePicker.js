@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from "react";
-import styles from "./DatePicker.module.css"
+import styled from 'styled-components';
 import {
     addDays,
     addMonths,
@@ -12,6 +12,96 @@ import {
 } from "date-fns";
 import { ru } from 'date-fns/locale'
 import enUsLocale from "date-fns/locale/en-US";
+
+
+const Container = styled.div`
+    display: flex;
+    width: 100%;
+    background: inherit;
+`
+
+const ButtonWrapper = styled.div`
+    display: flex;
+    align-items: flex-end;
+    z-index: 2;
+    background: inherit;
+`
+
+const Button = styled.button`
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-bottom: 5px;
+`
+
+const DateListScrollable = styled.div`
+    display: flex;
+    overflow-x: scroll;
+    scrollbar-width: none;
+    margin: 2px 0 2px -40px;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        -webkit-appearance: none;
+        display: none;
+    }
+`
+
+const MonthContainer = styled.div`
+    & span {
+        display: flex;
+        flex-direction: column;
+    }
+`
+
+const MonthYearLabel = styled.div`
+    align-self: flex-start;
+    z-index: 3;
+    font-size: 15px;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: max-content;
+    margin: 0 14px 10px 0;
+`
+
+const DateDayItem = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    margin: 0 0 0 5px;
+    width: 45px;
+    height: 49px;
+    flex-shrink: 0;
+`
+
+const DaysContainer = styled.div`
+    display: flex;
+    z-index: 1;
+`
+
+const DayLabel = styled.div`
+    font-size: 6px;
+    margin: 4px 0 0 0;
+    visibility: hidden;
+`
+
+const DateLabel = styled.div`
+    font-size: 18px;
+`
 
 export default function DatePicker({endDate, selectDate, getSelectedDay, color, labelFormat, language}) {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -50,34 +140,33 @@ export default function DatePicker({endDate, selectDate, getSelectedDay, color, 
             end = i === differenceInMonths(lastDate, startDate) ? Number(format(lastDate, "d")) : Number(format(lastDayOfMonth(month), "d"));
             for (let j = start; j < end; j++) {
                 days.push(
-                    <div id={`${getId(addDays(startDate, j))}`}
-                         className={styles.dateDayItem}
+                    <DateDayItem id={`${getId(addDays(startDate, j))}`}
                          style={getStyles(addDays(month, j))}
                          key={addDays(month, j)}
                          onClick={() => onDateClick(addDays(month, j))}
                     >
-                        <div className={styles.dayLabel}>
+                        <DayLabel>
                             {format(addDays(month, j), dayFormat)}
-                        </div>
-                        <div className={styles.dateLabel}>
+                        </DayLabel>
+                        <DateLabel>
                             {format(addDays(month, j), dateFormat)}
-                        </div>
-                    </div>
+                        </DateLabel>
+                    </DateDayItem>
                 );
             }
             months.push(
-                <div className={styles.monthContainer} key={month}>
-                    <span className={styles.monthYearLabel} style={labelColor}>
+                <MonthContainer key={month}>
+                    <MonthYearLabel style={labelColor}>
                         {format(month, labelFormat || "MMMM yyyy", { locale: lang })}
-                    </span>
-                    <div className={styles.daysContainer} style={i===0?firstSection:null}>
+                    </MonthYearLabel>
+                    <DaysContainer style={i===0?firstSection:null}>
                         {days}
-                    </div>
-                </div>
+                    </DaysContainer>
+                </MonthContainer>
             );
             days = [];
         }
-        return <div id={"container"} className={styles.dateListScrollable}>{months}</div>;
+        return <DateListScrollable id={"container"}>{months}</DateListScrollable>;
     }
 
     const onDateClick = day => {
@@ -137,14 +226,14 @@ export default function DatePicker({endDate, selectDate, getSelectedDay, color, 
     }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.buttonWrapper}>
-                <button className={styles.button} style={buttonColor} onClick={prevWeek}>←</button>
-            </div>
+        <Container>
+            <ButtonWrapper>
+                <Button style={buttonColor} onClick={prevWeek}>←</Button>
+            </ButtonWrapper>
             {renderDays(langCode)}
-            <div className={styles.buttonWrapper}>
-                <button className={styles.button} style={buttonColor} onClick={nextWeek}>→</button>
-            </div>
-        </div>
+            <ButtonWrapper>
+                <Button style={buttonColor} onClick={nextWeek}>→</Button>
+            </ButtonWrapper>
+        </Container>
     )
 }
