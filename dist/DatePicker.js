@@ -1,13 +1,95 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import styles from "./DatePicker.module.css";
+import styled from 'styled-components';
 import { addDays, addMonths, differenceInMonths, format, isSameDay, lastDayOfMonth, startOfMonth } from "date-fns";
+import { ru } from 'date-fns/locale';
+import enUsLocale from "date-fns/locale/en-US";
+const Container = styled.div`
+    display: flex;
+    width: 100%;
+    background: inherit;
+`;
+const ButtonWrapper = styled.div`
+    display: flex;
+    align-items: flex-end;
+    z-index: 2;
+    background: inherit;
+`;
+const Button = styled.button`
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-bottom: 5px;
+`;
+const DateListScrollable = styled.div`
+    display: flex;
+    overflow-x: scroll;
+    scrollbar-width: none;
+    margin: 2px 0 2px -40px;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        -webkit-appearance: none;
+        display: none;
+    }
+`;
+const MonthContainer = styled.div`
+    & span {
+        display: flex;
+        flex-direction: column;
+    }
+`;
+const MonthYearLabel = styled.div`
+    align-self: flex-start;
+    z-index: 3;
+    font-size: 15px;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: max-content;
+    margin: 0 14px 10px 0;
+`;
+const DateDayItem = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    margin: 0 0 0 5px;
+    width: 45px;
+    height: 49px;
+    flex-shrink: 0;
+`;
+const DaysContainer = styled.div`
+    display: flex;
+    z-index: 1;
+`;
+const DayLabel = styled.div`
+    font-size: 6px;
+    margin: 4px 0 0 0;
+    visibility: hidden;
+`;
+const DateLabel = styled.div`
+    font-size: 18px;
+`;
 export default function DatePicker({
   endDate,
   selectDate,
   getSelectedDay,
   color,
-  labelFormat
+  labelFormat,
+  language
 }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const firstSection = {
@@ -47,7 +129,7 @@ export default function DatePicker({
     }
   };
 
-  function renderDays() {
+  function renderDays(lang) {
     const dayFormat = "E";
     const dateFormat = "d";
     const months = [];
@@ -60,35 +142,28 @@ export default function DatePicker({
       end = i === differenceInMonths(lastDate, startDate) ? Number(format(lastDate, "d")) : Number(format(lastDayOfMonth(month), "d"));
 
       for (let j = start; j < end; j++) {
-        days.push( /*#__PURE__*/React.createElement("div", {
+        days.push( /*#__PURE__*/React.createElement(DateDayItem, {
           id: `${getId(addDays(startDate, j))}`,
-          className: styles.dateDayItem,
           style: getStyles(addDays(month, j)),
           key: addDays(month, j),
           onClick: () => onDateClick(addDays(month, j))
-        }, /*#__PURE__*/React.createElement("div", {
-          className: styles.dayLabel
-        }, format(addDays(month, j), dayFormat)), /*#__PURE__*/React.createElement("div", {
-          className: styles.dateLabel
-        }, format(addDays(month, j), dateFormat))));
+        }, /*#__PURE__*/React.createElement(DayLabel, null, format(addDays(month, j), dayFormat)), /*#__PURE__*/React.createElement(DateLabel, null, format(addDays(month, j), dateFormat))));
       }
 
-      months.push( /*#__PURE__*/React.createElement("div", {
-        className: styles.monthContainer,
+      months.push( /*#__PURE__*/React.createElement(MonthContainer, {
         key: month
-      }, /*#__PURE__*/React.createElement("span", {
-        className: styles.monthYearLabel,
+      }, /*#__PURE__*/React.createElement(MonthYearLabel, {
         style: labelColor
-      }, format(month, labelFormat || "MMMM yyyy")), /*#__PURE__*/React.createElement("div", {
-        className: styles.daysContainer,
+      }, format(month, labelFormat || "MMMM yyyy", {
+        locale: lang
+      })), /*#__PURE__*/React.createElement(DaysContainer, {
         style: i === 0 ? firstSection : null
       }, days)));
       days = [];
     }
 
-    return /*#__PURE__*/React.createElement("div", {
-      id: "container",
-      className: styles.dateListScrollable
+    return /*#__PURE__*/React.createElement(DateListScrollable, {
+      id: "container"
     }, months);
   }
 
@@ -140,22 +215,27 @@ export default function DatePicker({
     e.scrollLeft -= width - 60;
   };
 
-  return /*#__PURE__*/React.createElement("div", {
-    className: styles.container
-  }, /*#__PURE__*/React.createElement("div", {
-    className: styles.buttonWrapper
-  }, /*#__PURE__*/React.createElement("button", {
-    className: styles.button,
+  let langCode;
+
+  switch (language) {
+    case "en":
+      langCode = enUsLocale;
+      break;
+
+    case "ru":
+      langCode = ru;
+      break;
+
+    default:
+      langCode = ru;
+      break;
+  }
+
+  return /*#__PURE__*/React.createElement(Container, null, /*#__PURE__*/React.createElement(ButtonWrapper, null, /*#__PURE__*/React.createElement(Button, {
     style: buttonColor,
     onClick: prevWeek
-  }, "\u2190")), renderDays(), /*#__PURE__*/React.createElement("div", {
-    className: styles.buttonWrapper
-  }, /*#__PURE__*/React.createElement("button", {
-    className: styles.button,
+  }, "\u2190")), renderDays(langCode), /*#__PURE__*/React.createElement(ButtonWrapper, null, /*#__PURE__*/React.createElement(Button, {
     style: buttonColor,
     onClick: nextWeek
   }, "\u2192")));
 }
-/*more pictures
-* example code sandbox
-* update readme*/
