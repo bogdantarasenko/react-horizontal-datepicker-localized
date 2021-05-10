@@ -10,8 +10,10 @@ import {
     lastDayOfMonth,
     startOfMonth
 } from "date-fns";
+import { ru } from 'date-fns/locale'
+import enUsLocale from "date-fns/locale/en-US";
 
-export default function DatePicker({endDate, selectDate, getSelectedDay, color, labelFormat}) {
+export default function DatePicker({endDate, selectDate, getSelectedDay, color, labelFormat, language}) {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const firstSection = {marginLeft: '40px'};
     const startDate = new Date();
@@ -36,7 +38,7 @@ export default function DatePicker({endDate, selectDate, getSelectedDay, color, 
         }
     };
 
-    function renderDays() {
+    function renderDays(lang) {
         const dayFormat = "E";
         const dateFormat = "d";
         const months = [];
@@ -66,7 +68,7 @@ export default function DatePicker({endDate, selectDate, getSelectedDay, color, 
             months.push(
                 <div className={styles.monthContainer} key={month}>
                     <span className={styles.monthYearLabel} style={labelColor}>
-                        {format(month, labelFormat || "MMMM yyyy")}
+                        {format(month, labelFormat || "MMMM yyyy", { locale: lang })}
                     </span>
                     <div className={styles.daysContainer} style={i===0?firstSection:null}>
                         {days}
@@ -121,12 +123,25 @@ export default function DatePicker({endDate, selectDate, getSelectedDay, color, 
         e.scrollLeft -= width - 60;
     };
 
+    let langCode
+    switch (language) {
+        case "en":
+            langCode = enUsLocale
+            break;
+        case "ru":
+            langCode = ru
+            break;
+        default:
+            langCode = ru
+            break;
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.buttonWrapper}>
                 <button className={styles.button} style={buttonColor} onClick={prevWeek}>←</button>
             </div>
-            {renderDays()}
+            {renderDays(langCode)}
             <div className={styles.buttonWrapper}>
                 <button className={styles.button} style={buttonColor} onClick={nextWeek}>→</button>
             </div>

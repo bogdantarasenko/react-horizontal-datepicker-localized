@@ -1,10 +1,10 @@
 {
-  "name": "react-horizontal-datepicker",
+  "name": "react-horizontal-datepicker-localized",
   "version": "2.0.3",
-  "homepage": "https://github.com/kush-agra/react-horizontal-datepicker",
+  "homepage": "https://github.com/bogdantarasenko/react-horizontal-datepicker-localized",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kush-agra/react-horizontal-datepicker.git"
+    "url": "https://github.com/bogdantarasenko/react-horizontal-datepicker-localized.git"
   },
   "keywords": [
     "date-picker",
