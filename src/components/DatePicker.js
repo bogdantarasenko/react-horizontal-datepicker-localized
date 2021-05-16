@@ -94,7 +94,7 @@ const DaysContainer = styled.div`
 `
 
 const DayLabel = styled.div`
-    font-size: 6px;
+    font-size: 3px;
     margin: 4px 0 0 0;
     visibility: hidden;
 `
